@@ -2,11 +2,11 @@
 #
 # $Id: gsm0338.py 4390 2010-04-14 06:58:43Z rjones $
 # $HeadURL: svn+ssh://svn/svn/trunk/api/eklib/gsm0338.py $
-# 
+#
 #
 # Copyright 2009-2011 ekit.com Inc
 #
-"""Python Character Mapping Codec generated from 'GSM0338.TXT' with 
+"""Python Character Mapping Codec generated from 'GSM0338.TXT' with
 gencodec.py.
 """#"
 
@@ -79,9 +79,14 @@ class Codec(codecs.Codec):
                 try:
                     result.append(decoding_map[ord(c)])
                 except KeyError:
-                    # error handling: unassigned byte, must be > 0x7f
-                    raise UnicodeDecodeError('GSM-0338', input, index, index+1,
-                        'ordinal not in range(128)')
+                    if errors == 'replace':
+                        result.append(ord('?'))
+                    elif errors == 'ignore':
+                        pass
+                    else:
+                        # error handling: unassigned byte, must be > 0x7f
+                        raise UnicodeDecodeError('GSM-0338', input, index, index+1,
+                            'ordinal not in range(128)')
         try:
             return u"".join([unichr(x) for x in result]), len(result)
         except:
