@@ -2,11 +2,11 @@
 #
 # $Id: gsm0338.py 4390 2010-04-14 06:58:43Z rjones $
 # $HeadURL: svn+ssh://svn/svn/trunk/api/eklib/gsm0338.py $
-#
+# 
 #
 # Copyright 2009-2011 ekit.com Inc
 #
-"""Python Character Mapping Codec generated from 'GSM0338.TXT' with
+"""Python Character Mapping Codec generated from 'GSM0338.TXT' with 
 gencodec.py.
 """#"
 
@@ -79,18 +79,13 @@ class Codec(codecs.Codec):
                 try:
                     result.append(decoding_map[ord(c)])
                 except KeyError:
-                    if errors == 'replace':
-                        result.append(ord('?'))
-                    elif errors == 'ignore':
-                        pass
-                    else:
-                        # error handling: unassigned byte, must be > 0x7f
-                        raise UnicodeDecodeError('GSM-0338', input, index, index+1,
-                            'ordinal not in range(128)')
+                    # error handling: unassigned byte, must be > 0x7f
+                    raise UnicodeDecodeError('GSM-0338', input, index, index+1,
+                        'ordinal not in range(128)')
         try:
             return u"".join([unichr(x) for x in result]), len(result)
         except:
-            print "err", result
+            print("err", result)
             raise
 
 class StreamWriter(Codec,codecs.StreamWriter):
@@ -272,18 +267,18 @@ if __name__=='__main__':
     c = Codec()
     def test(s):
         r = c.decode(c.encode(s))[0]
-        if r != s: print 'in %r != out %r'%(s, r)
+        if r != s: print('in %r != out %r'%(s, r))
     test(unicode(string.letters))
-    test(u'\u20ac')
-    test(u'\xa0')
+    test('\u20ac')
+    test('\xa0')
     try:
-        test(u'av\u20ad')
-    except Exception, e:
-        print `u'av\u20ad'`, 'raised', e
+        test('av\u20ad')
+    except Exception as e:
+        print('av\u20ad', 'raised', e)
     try:
-        c.decode(u'café'.encode('utf8'))
-    except Exception, e:
-        print `u'café'`, 'raised', e
+        c.decode('café'.encode('utf8'))
+    except Exception as e:
+        print('café', 'raised', e)
 
 
 # Copyright (c) 2011 eKit.com Inc (http://www.ekit.com/)
