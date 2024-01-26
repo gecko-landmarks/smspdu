@@ -14,7 +14,7 @@ the detail of the book.
 import re
 import time
 import unicodedata
-import gsm0338
+from . import gsm0338
 
 SMS_TYPES = 'SMS-DELIVER SMS-SUBMIT SMS-STATUS-REPORT RESERVED'.split()
 
@@ -210,7 +210,7 @@ class SMS_GENERIC(object):
             try:
                 user_data = unpackUCS2(data)
                 user_data = user_data[:actual_udl]
-            except UnicodeDecodeError, e:
+            except UnicodeDecodeError(e):
                 raise PDUDecodeError('PDU corrupted: %s' % e)
         else:
             raise PDUDecodeError('tp_dcs of 0x%02x (%s), charset %s' % (tp_dcs,
@@ -1012,13 +1012,13 @@ def parse_udhi(data, debug=False):
     headerlen = 0
 
     if debug:
-        print "user-data", ' '.join([hex(ord(x)) for x in data])
+        print("user-data", ' '.join([hex(ord(x)) for x in data]))
     headerlen = ord(data[0])
     if debug:
-        print "header len", headerlen
+        print("header len", headerlen)
     header = data[1:headerlen + 1]
     if debug:
-        print "header", ' '.join([hex(ord(x)) for x in header])
+        print("header", ' '.join([hex(ord(x)) for x in header]))
     data = data[headerlen + 1:]
     while header:
         ie = ord(header[0])
@@ -1027,7 +1027,7 @@ def parse_udhi(data, debug=False):
         headers[ie] = ieval
         header = header[2 + ielen:]
     if debug:
-        print "headers", headers
+        print("headers", headers)
 
     for ie, val in headers.items():
         if ie == 0:
@@ -1124,7 +1124,7 @@ def decompress_user_data(bytes):
     '''
     bytes = bytearray(bytes)
     header = CompressionHeader(bytes)
-    print header
+    print(header)
     TODO
 
 class CompressionHeader:
@@ -1293,7 +1293,7 @@ def pack7bit(string, headerlen=0):
         if cur % 7:
             n = 7 - (cur / 7) % 7
         num_septets = len(string) + 1
-        #print 'header length', headerlen, 'starts at', cur, 'and mod is', n
+        #print('header length', headerlen, 'starts at', cur, 'and mod is', n)
 
     # pack all those pesky septets into one big number
     bignum = 0
@@ -1303,13 +1303,13 @@ def pack7bit(string, headerlen=0):
         n += 7
 
     # now grab octets from that big number, starting from the bottom
-    #print format(bignum, 'b')
+    #print(format(bignum, 'b'))
     m = 0
     l = []
     while n > 0:
         mask = 0xFF << m
         l.append((bignum & mask) >> m)
-        #print format(l[-1], '08b')
+        #print(format(l[-1], '08b'))
         m += 8
         n -= 8
 
@@ -1568,14 +1568,14 @@ def dump(pdu):
     tp_mti = first & 0x03  # message type
     if tp_mti == 1:
         p = SMS_SUBMIT.fromPDU(pdu, 'unknown')
-        print
-        print p.toPDU(1)
-        print p.dump()
+        print()
+        print(p.toPDU(1))
+        print(p.dump())
     else:
         p = SMS_DELIVER.fromPDU(pdu, 'unknown')
-        print
-        print p.toPDU(1)
-        print p.dump()
+        print()
+        print(p.toPDU(1))
+        print(p.dump())
 
 if __name__ == '__main__':
     import sys
